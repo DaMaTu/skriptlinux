@@ -1,0 +1,50 @@
+#!/bin/bash
+# Kontrollime, kas skripti käivitab root
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Seda skripti peab käivitama root kasutaja."
+  exit 1
+fi
+
+# Kontrollime, et mõlemad argumendid on antud
+if [ $# -ne 2 ]; then
+  echo "Kasutus: $0 kasutajanimi parool"
+  exit 1
+fi
+
+KASUTAJA=$1
+PAROOL=$2
+
+# Kontrollime, kas kasutaja juba eksisteerib
+if id "$KASUTAJA" &>/dev/null; then
+  echo "Kasutaja '$KASUTAJA' on juba olemas."
+  exit 1
+fi
+
+# Loome kasutaja koos kodukataloogiga
+useradd -m "$KASUTAJA"
+
+# Kontrollime, kas lisamine õnnestus
+if [ $? -ne 0 ]; then
+  echo "Viga: kasutaja '$KASUTAJA' loomisel."
+  exit 1
+fi
+
+# Lisame kasutajale parooli
+echo "$KASUTAJA:$PAROOL" | chpasswd
+
+if [ $? -eq 0 ]; then
+  echo "Kasutaja '$KASUTAJA' parool on lisatud."
+else
+  echo "Viga: parooli määramisel kasutajale '$KASUTAJA'."
+  exit 1
+fi
+
+# Kontrollime tulemusi
+echo "Kontroll /etc/passwd:"
+grep "$KASUTAJA" /etc/passwd
+
+echo "Kontroll /etc/shadow:"
+grep "$KASUTAJA" /etc/shadow
+
+echo "Kodukataloogi sisu:"
+ls -la "/home/$KASUTAJA"
