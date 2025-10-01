@@ -1,0 +1,20 @@
+#!/bin/bash
+# Kontrollime, kas parameeter (failinimi) on antud
+if [ $# -ne 1 ]; then
+    echo "Kasutamine: $0 failinimi"
+    exit 1
+fi
+
+fail=$1
+
+# Kontrollime, kas fail on olemas
+if [ ! -f "$fail" ]; then
+    echo "Faili $fail ei leitud!"
+    exit 1
+fi
+
+# Loeme iga rea failist ja kutsume lisa_kasutaja skripti
+while IFS= read -r kasutaja
+do
+    ./lisa_kasutaja "$kasutaja"
+done < "$fail"
