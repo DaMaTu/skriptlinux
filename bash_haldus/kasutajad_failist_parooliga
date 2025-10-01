@@ -1,0 +1,20 @@
+#!/bin/bash
+# Kontrollime, et failinimi anti kaasa
+if [ $# -ne 1 ]; then
+    echo "Kasutamine: $0 failinimi"
+    exit 1
+fi
+
+fail=$1
+
+# Kontrollime, et fail eksisteerib
+if [ ! -f "$fail" ]; then
+    echo "Faili $fail ei leitud!"
+    exit 1
+fi
+
+# Loeme faili rida-realt (kasutajanimi:parool)
+while IFS=: read -r kasutaja parool
+do
+    ./lisa_kasutaja_parooliga "$kasutaja" "$parool"
+done < "$fail"
