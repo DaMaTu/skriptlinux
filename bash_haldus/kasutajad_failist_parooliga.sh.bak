@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Kontroll: kas käivitab root kasutaja? (UID 0)
+if [ "$(id -u)" -ne 0 ]; then
+    echo "❌ See skript peab olema käivitatud root kasutajana!"
+    exit 1
+fi
+
+# Kontroll: KEELATA käivitamine sudo kaudu (SUDO_USER muutujast)
+if [ -n "$SUDO_USER" ]; then
+    echo "❌ Seda skripti ei tohi käivitada sudo kaudu! Logi sisse root kasutajana."
+    exit 1
+fi
+
+echo "✅ Kontroll läbitud — skripti käivitab root (ilma sudo)."
+
+# --- siia allpool jätkub skripti põhiosa ---
